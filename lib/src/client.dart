@@ -4,26 +4,26 @@ import 'package:http/http.dart';
 import 'base_client.dart';
 import 'sigv4.dart';
 
-const _x_amz_date_key = 'x-amz-date';
-const _x_amz_target_key = 'x-amz-target';
-const _x_amz_security_token_key = 'x-amz-security-token';
-const _x_amz_content_sha256_key = 'x-amz-content-sha256';
-const _host_key = 'host';
-const _authorization_key = 'Authorization';
-const _content_encoding_key = 'content-encoding';
-const _content_type_key = 'content-type';
-const _content_type_default_val = 'application/json; charset=utf-8';
-const _content_encoding_default_val = 'amz-1.0';
-const _target_default_val = 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems';
-const _chunked_val = 'aws-chunked';
-const _unsigned_payload_val = 'UNSIGNED-PAYLOAD';
-const _chunked_payload_val = 'STREAMING-AWS4-HMAC-SHA256-PAYLOAD';
 
 /// A client that stores secrets and configuration for AWS requests
 /// signed with Signature Version 4. Required the following parameters:
 /// - `keyId`: Your access key ID
 /// - `accessKey`: Your secret access key
 class Sigv4Client implements BaseSigv4Client {
+  static const x_amz_date_key = 'x-amz-date';
+  static const x_amz_target_key = 'x-amz-target';
+  static const x_amz_security_token_key = 'x-amz-security-token';
+  static const x_amz_content_sha256_key = 'x-amz-content-sha256';
+  static const host_key = 'host';
+  static const authorization_key = 'Authorization';
+  static const content_encoding_key = 'content-encoding';
+  static const content_type_key = 'content-type';
+  static const content_type_default_val = 'application/json; charset=utf-8';
+  static const content_encoding_default_val = 'amz-1.0';
+  static const target_default_val = 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems';
+  static const chunked_val = 'aws-chunked';
+  static const unsigned_payload_val = 'UNSIGNED-PAYLOAD';
+  static const chunked_payload_val = 'STREAMING-AWS4-HMAC-SHA256-PAYLOAD';
   /// The region of the service(s) to be called.
   String region;
 
@@ -50,7 +50,7 @@ class Sigv4Client implements BaseSigv4Client {
     @required this.serviceName,
     @required this.region,
     this.sessionToken,
-    this.defaultContentType = _content_type_default_val
+    this.defaultContentType = content_type_default_val
   })  : assert(keyId != null),
         assert(accessKey != null);
 
@@ -95,19 +95,19 @@ class Sigv4Client implements BaseSigv4Client {
     headers ??= {};
 
     if (encoding != null) {
-      headers[_content_encoding_key] = encoding;
+      headers[content_encoding_key] = encoding;
     }
     else {
-      headers[_content_encoding_key] = _content_encoding_default_val;
+      headers[content_encoding_key] = content_encoding_default_val;
     }
 
-    if (headers[_x_amz_target_key] == null) {
-      headers[_x_amz_target_key] == _target_default_val;
+    if (headers[x_amz_target_key] == null) {
+      headers[x_amz_target_key] == target_default_val;
     }
 
     /// Set the `Content-Type header`
-    if (headers[_content_type_key] == null) {
-      headers[_content_type_key] = defaultContentType;
+    if (headers[content_type_key] == null) {
+      headers[content_type_key] = defaultContentType;
     }
 
     /// Set the `body`, if any
@@ -115,32 +115,32 @@ class Sigv4Client implements BaseSigv4Client {
       body = '';
     }
 
-    headers[_x_amz_content_sha256_key] =
-        signPayload ? Sigv4.hashPayload(body) : _unsigned_payload_val;
+    headers[x_amz_content_sha256_key] =
+        signPayload ? Sigv4.hashPayload(body) : unsigned_payload_val;
 
     if (body == '') {
-      headers.remove(_content_type_key);
+      headers.remove(content_type_key);
     }
 
     if (chunked) {
-      headers[_content_encoding_key] = _chunked_val;
+      headers[content_encoding_key] = chunked_val;
     }
 
     /// Sets or generate the `dateTime` parameter needed for the signature
     dateTime ??= Sigv4.generateDatetime();
-    headers[_x_amz_date_key] = dateTime;
+    headers[x_amz_date_key] = dateTime;
 
     /// Sets the `host` header
     final baseUri = Uri.parse(baseUrl);
-    headers[_host_key] = baseUri.host;
+    headers[host_key] = baseUri.host;
 
-    if (headers.containsKey(_content_encoding_key) &&
-        headers[_content_encoding_key] == _chunked_val) {
-      headers[_x_amz_content_sha256_key] = _chunked_payload_val;
+    if (headers.containsKey(content_encoding_key) &&
+        headers[content_encoding_key] == chunked_val) {
+      headers[x_amz_content_sha256_key] = chunked_payload_val;
     }
 
     /// Generates the `Authorization` headers
-    headers[_authorization_key] = _generateAuthorization(
+    headers[authorization_key] = _generateAuthorization(
       method: method,
       path: path,
       query: query,
@@ -151,7 +151,7 @@ class Sigv4Client implements BaseSigv4Client {
 
     /// Adds the `x-amz-security-token` header if a session token is present
     if (sessionToken != null) {
-      headers[_x_amz_security_token_key] = sessionToken;
+      headers[x_amz_security_token_key] = sessionToken;
     }
 
     // Return only string values
