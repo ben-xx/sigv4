@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 import 'package:sigv4/sigv4.dart';
 
@@ -53,7 +52,4 @@ void main() {
 
   // Extensions on `http` Request objects
   Request('GET', Uri.parse(path)).sign(client);
-
-  // Extensions on `dio` RequestOptions objects
-  RequestOptions(method: 'GET', path: path).sign(client);
 }
