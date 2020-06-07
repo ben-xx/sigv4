@@ -102,7 +102,7 @@ class Sigv4Client implements BaseSigv4Client {
     }
 
     if (headers[x_amz_target_key] == null) {
-      headers[x_amz_target_key] == target_default_val;
+      headers[x_amz_target_key] = target_default_val;
     }
 
     /// Set the `Content-Type header`
